@@ -145,3 +145,10 @@ textarea:focus, input:focus, select:focus { border-color: var(--red); outline: n
 .tabbar .js-cnt { top: -4px; right: -12px; } @media (min-width: 701px) { .tabbar { display: none; } body { padding-bottom: 0; } }
 .pl-toast { position: fixed; left: 50%; bottom: 140px; transform: translate(-50%, 20px); background: var(--dark); color: #fff; padding: 11px 18px; border-radius: 12px; font-weight: 700; opacity: 0; pointer-events: none; transition: .25s; z-index: 80; max-width: 90vw; text-align: center; }
 .pl-toast.show { opacity: 1; transform: translate(-50%, 0); } .pl-toast.bad { background: #b3261e; }
+
+/* fotos reales */
+.chip img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: -6px; margin-right: 2px; }
+.sec-f { width: 42px; height: 42px; border-radius: 12px; object-fit: cover; display: inline-block; vertical-align: -10px; margin-right: 4px; box-shadow: var(--sh); }
+.hero-img { position: relative; width: 250px; height: 250px; object-fit: cover; border-radius: 50%; border: 6px solid var(--yellow); box-shadow: 0 16px 40px rgba(0,0,0,.55); animation: flota 5s ease-in-out infinite; }
+.card-img img { background: #f1e9db; }
+.cred { grid-column: 1 / -1; font-size: .75rem; color: #8d867b; } .cred summary { cursor: pointer; } .cred a { color: #bdb6aa; }

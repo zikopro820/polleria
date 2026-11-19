@@ -16,18 +16,19 @@ const LDB = { get() { let d = null; try { d = JSON.parse(localStorage.getItem("p
   save(d) { try { localStorage.setItem("pl_db", JSON.stringify(d)); } catch (e) {} } };
 const lista = o => Object.entries(o || {}).map(([id, v]) => ({ ...v, id }));
 const codigo = (p = "PL") => p + "-" + Array.from(crypto.getRandomValues(new Uint8Array(6)), b => "23456789ABCDEFGHJKMNPQRSTUVWXYZ"[b % 31]).join("");
+const conFoto = (l, tipo, w) => l.map(x => x.foto || !(window.PL_FOTOS || {})[tipo]?.[x.id] ? x : { ...x, foto: window.PL_FOTO(window.PL_FOTOS[tipo][x.id], w) });
 const orden = l => l.sort((a, b) => (a.orden ?? 99) - (b.orden ?? 99));
 function ejemplo() { window.PL_DEMO_DATOS = false; const d = window.PL_SEMILLA(); return { cats: lista(d.categorias), prods: lista(d.productos), zonas: lista(d.zonas) }; }
 const DB = {
   async catalogo(fresco) {
     const A = window.PL_AJUSTES || {};
-    if (DEMO) { const d = LDB.get(); return { aj: { ...A, ...(d.ajustes.general || {}) }, cats: orden(lista(d.categorias)), prods: orden(lista(d.productos)), zonas: orden(lista(d.zonas)) }; }
+    if (DEMO) { const d = LDB.get(); return { aj: { ...A, ...(d.ajustes.general || {}) }, cats: conFoto(orden(lista(d.categorias)), "categorias", 300), prods: conFoto(orden(lista(d.productos)), "productos"), zonas: orden(lista(d.zonas)) }; }
     if (!fresco) try { const c = JSON.parse(sessionStorage.getItem("pl_cat")); if (c && Date.now() - c.t < 60000) return c.d; } catch (e) {}
     try {
       const { fs, db } = await fb(), g = async n => (await fs.getDocs(fs.collection(db, n))).docs.map(x => ({ ...x.data(), id: x.id }));
       const [aj, cats, prods, zonas] = await Promise.all([fs.getDoc(fs.doc(db, "ajustes", "general")).then(x => x.exists() ? x.data() : {}), g("categorias"), g("productos"), g("zonas")]);
       const ej = (!cats.length || !prods.length) ? ejemplo() : null;
-      const out = { aj: { ...A, ...aj }, cats: orden(cats.length ? cats : ej.cats), prods: orden(prods.length ? prods : ej.prods), zonas: orden(zonas.length || !ej ? zonas : ej.zonas) };
+      const out = { aj: { ...A, ...aj }, cats: conFoto(orden(cats.length ? cats : ej.cats), "categorias", 300), prods: conFoto(orden(prods.length ? prods : ej.prods), "productos"), zonas: orden(zonas.length || !ej ? zonas : ej.zonas) };
       try { sessionStorage.setItem("pl_cat", JSON.stringify({ t: Date.now(), d: out })); } catch (e) {}
       return out;
     } catch (e) { console.warn("Firebase:", e.message); const ej = ejemplo(); return { aj: A, cats: ej.cats, prods: ej.prods, zonas: ej.zonas }; }

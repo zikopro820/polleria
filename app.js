@@ -13,7 +13,8 @@ function aviso(msg, bad) { let t = $(".pl-toast"); if (!t) { t = document.create
   t.textContent = msg; t.className = "pl-toast show" + (bad ? " bad" : ""); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("show"), 3200); }
 const IMG = f => !f ? "" : /^(data:|https?:)/.test(f) ? f : `https://images.unsplash.com/photo-${f}?auto=format&fit=crop&w=600&q=70`;
 const icoCat = id => (CATS.find(c => c.id === id) || {}).icono || "🍗";
-const foto = (p, cls = "") => p.foto ? `<img class="${cls}" src="${esc(IMG(p.foto))}" alt="${esc(p.nombre)}" loading="lazy">` : `<div class="ph ${cls}" aria-hidden="true">${esc(icoCat(p.cat))}</div>`;
+// Si una foto no carga, se muestra el dibujo de la categoría (nunca un cuadro roto)
+const foto = (p, cls = "") => p.foto ? `<img class="${cls}" src="${esc(IMG(p.foto))}" alt="${esc(p.nombre)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;ph ${cls}&quot; aria-hidden=&quot;true&quot;>${esc(icoCat(p.cat))}</div>'">` : `<div class="ph ${cls}" aria-hidden="true">${esc(icoCat(p.cat))}</div>`;
 
 /* ---------- Horario (hora de Lima) ---------- */
 function horaLima() { const d = new Date(Date.now() - 5 * 3600e3); return { dia: d.getUTCDay(), min: d.getUTCHours() * 60 + d.getUTCMinutes() }; }
@@ -51,16 +52,18 @@ function paginaCarta() {
   const box = $("#carta"); if (!box) return;
   const vis = PRODS.filter(p => p.activo !== false), cats = CATS.filter(c => vis.some(p => p.cat === c.id));
   const dest = vis.filter(p => p.destacado && !p.agotado).slice(0, 6);
-  $("#chips").innerHTML = (dest.length ? `<a href="#c-dest" class="chip on">⭐ Favoritos</a>` : "") + cats.map(c => `<a href="#c-${esc(c.id)}" class="chip">${esc(c.icono || "")} ${esc(c.nombre)}</a>`).join("");
+  $("#chips").innerHTML = (dest.length ? `<a href="#c-dest" class="chip on">⭐ Favoritos</a>` : "") + cats.map(c => `<a href="#c-${esc(c.id)}" class="chip">${c.foto ? `<img src="${esc(IMG(c.foto))}" alt="" loading="lazy" onerror="this.remove()">` : esc(c.icono || "")} ${esc(c.nombre)}</a>`).join("");
   const card = p => `<article class="card ${p.agotado ? "agot" : ""}"><button type="button" class="card-b" data-p="${esc(p.id)}" ${p.agotado ? "disabled" : ""} aria-label="${esc(p.nombre)}">
       <div class="card-img">${foto(p)}${p.agotado ? `<span class="tag-ag">Agotado</span>` : p.destacado ? `<span class="tag-st">⭐ Favorito</span>` : ""}</div>
       <div class="card-t"><h3>${esc(p.nombre)}</h3><p>${esc(p.desc || "")}</p><div class="card-f"><b>${soles(p.precio)}</b>${p.agotado ? "" : `<span class="add">+</span>`}</div></div></button></article>`;
   box.innerHTML = (dest.length ? `<section class="sec" id="c-dest"><h2>⭐ Los favoritos de la casa</h2><div class="grid">${dest.map(card).join("")}</div></section>` : "")
-    + cats.map(c => `<section class="sec" id="c-${esc(c.id)}"><h2>${esc(c.icono || "")} ${esc(c.nombre)}</h2><div class="grid">${vis.filter(p => p.cat === c.id).map(card).join("")}</div></section>`).join("");
+    + cats.map(c => `<section class="sec" id="c-${esc(c.id)}"><h2>${c.foto ? `<img class="sec-f" src="${esc(IMG(c.foto))}" alt="" loading="lazy" onerror="this.remove()">` : esc(c.icono || "")} ${esc(c.nombre)}</h2><div class="grid">${vis.filter(p => p.cat === c.id).map(card).join("")}</div></section>`).join("");
   box.addEventListener("click", e => { const b = e.target.closest("[data-p]"); if (b) abrirProducto(b.dataset.p); });
   // chips: marcar la categoría visible
   const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) $$("#chips .chip").forEach(c => c.classList.toggle("on", c.getAttribute("href") === "#" + x.target.id)); }), { rootMargin: "-45% 0px -50% 0px" });
   $$(".sec", box).forEach(s => io.observe(s));
+  const hf = (dest.find(p => p.foto) || vis.find(p => p.foto)), art = $(".hero-art");
+  if (hf && art) art.innerHTML = `<div class="brasa"></div><img class="hero-img" src="${esc(IMG(hf.foto))}" alt="${esc(hf.nombre)}" onerror="this.outerHTML='<span>🍗</span>'">`;
   if (params.get("p")) abrirProducto(params.get("p"));
   if (params.get("carrito")) abrirCarrito();
 }
@@ -247,4 +250,7 @@ document.addEventListener("click", e => { if (e.target.closest(".js-carrito")) {
   const c = await DB.catalogo(); AJ = c.aj; CATS = c.cats; PRODS = c.prods; ZONAS = c.zonas;
   marca(); pintarBadge(); paginaCarta(); paginaPedido(); paginaMisPedidos();
   $$(".js-anio").forEach(e => e.textContent = new Date().getFullYear());
+  const usadas = [...PRODS, ...CATS].map(x => x.foto || "").filter(f => f.includes("commons.wikimedia.org"));
+  const pie = $(".pie"); if (usadas.length && pie) { const nombres = [...new Set(usadas.map(f => decodeURIComponent(f.split("FilePath/")[1].split("?")[0])))];
+    pie.insertAdjacentHTML("beforeend", `<details class="cred"><summary>Créditos de fotos</summary><p>Fotos de ejemplo de Wikimedia Commons (licencias CC BY / CC BY-SA, autores en cada enlace): ${nombres.map(n => `<a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(n)}" target="_blank" rel="noopener">${esc(n.replace(/_/g, " ").replace(/\.[a-z]+$/i, ""))}</a>`).join(" · ")}</p></details>`); }
 })();
