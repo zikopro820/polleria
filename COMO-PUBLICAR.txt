@@ -1,0 +1,17 @@
+POLLERÍA EL POLLÓN — Web y app (repositorio: polleria)
+================================================================
+
+1) Sube TODOS estos archivos (con la carpeta img) al repo polleria.
+2) Settings → Pages → Deploy from branch → main / root → Save.
+3) La web queda en: https://zikopro820.github.io/polleria/
+4) Antes, configura Firebase con el archivo COMO-CONFIGURAR.txt del panel (reglas y carta de ejemplo).
+
+APP EN EL CELULAR (PWA)
+- Android (Chrome): abre la web → botón «Instalar app» arriba, o menú ⋮ → «Instalar aplicación».
+- iPhone (Safari): botón Compartir → «Agregar a inicio».
+- Se abre a pantalla completa con el ícono de la pollería. Todo lo que cambies en el panel
+  (precios, platos agotados, horario, zonas) se ve en la web y en la app al instante.
+- Más adelante la publicamos en Play Store con esta misma web (PWABuilder).
+
+Si cambias el nombre del repositorio, actualiza "web" en firebase-config.js del PANEL
+(para los enlaces de seguimiento que se envían por WhatsApp).

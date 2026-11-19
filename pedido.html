@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi pedido · Pollería El Pollón</title>
+<meta name="description" content="Pollo a la brasa, parrillas y broaster. Pide por delivery o recoge en el local.">
+<meta name="theme-color" content="#c81e1e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html"><span class="logo js-logo" aria-hidden="true">🔥</span><span><b class="js-nombre">Pollería El Pollón</b><small class="estado js-estado"></small></span></a>
+  <nav class="top-n"><a href="index.html">Carta</a><a href="mis-pedidos.html">Mis pedidos</a><button type="button" class="ins js-instalar" hidden>⬇ Instalar app</button>
+    <a href="#" class="cart-b js-carrito" aria-label="Ver mi pedido">🛒<span class="js-cnt" hidden>0</span></a></nav>
+</header>
+<main class="wrap"><div id="pedidoBox"><p class="muted">Cargando tu pedido…</p></div></main>
+<footer class="pie"><div><b class="js-nombre"></b><p class="js-slogan"></p></div>
+  <div><p>📍 <span class="js-dir"></span></p><p>🕑 <span class="js-horario"></span></p><p>📞 <span class="js-tel"></span></p></div>
+  <p class="cp">© <span class="js-anio"></span> <span class="js-nombre"></span></p></footer>
+<nav class="tabbar" aria-label="Navegación"><a href="index.html" data-t="carta"><i>🍗</i>Carta</a><a href="mis-pedidos.html" data-t="mis"><i>🧾</i>Pedidos</a>
+  <a href="#" class="js-wa"><i>💬</i>WhatsApp</a><a href="#" class="js-carrito"><i>🛒<span class="js-cnt" hidden>0</span></i>Mi pedido</a></nav>
+<script src="firebase-config.js"></script><script src="datos.js"></script><script src="tienda.js"></script><script src="app.js"></script>
+</body>
+</html>
